@@ -1,6 +1,5 @@
-const {app, BrowserWindow} = require('electron')
+const {ipcMain, app, BrowserWindow} = require('electron')
 var path = require('path')
-var ipc = require('ipc')
 var concat = require('concat-stream')
 
 require('crash-reporter').start()
@@ -17,7 +16,7 @@ app.on('ready', function () {
     process.exit(results.ok ? 0 : 1)
   })
 
-  ipc.once('started', function () {
+  ipcMain.once('started', function () {
     process.stdin.pipe(concat(runTests))
   })
 
@@ -28,7 +27,7 @@ app.on('ready', function () {
     )
   }
 
-  ipc.on('log', function (e, data) {
+  ipcMain.on('log', function (e, data) {
     if (data) {
       console.log(data)
       if (data.match(/^Bail out!/)) {
@@ -44,13 +43,13 @@ app.on('ready', function () {
 
   function bootstrap () {
     return '' +
-    "var ipc = require('ipc')\n" +
+    "const {ipcRenderer} = require('electron')\n" +
     'console.log = redirect\n' +
     'process.browser = true\n' +
     "global.module.paths.push('" + process.cwd() + "/node_modules'" + ')\n' +
-    "ipc.send('started')\n" +
+    "ipcRenderer.send('started')\n" +
     'function redirect(text) {\n' +
-    "ipc.send('log', text)\n" +
+    "ipcRenderer.send('log', text)\n" +
     '}'
   }
 })
