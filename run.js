@@ -2,7 +2,9 @@ const {crashReporter, ipcMain, app, BrowserWindow} = require('electron')
 var path = require('path')
 var concat = require('concat-stream')
 
-crashReporter.start()
+crashReporter.start({
+  companyName: 'tape-run-electron'
+})
 
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({show: false})
@@ -43,7 +45,9 @@ app.on('ready', function () {
   function bootstrap () {
     return `
       const {ipcRenderer, crashReporter} = require('electron')
-      crashReporter.start()
+      crashReporter.start({
+        companyName: 'tape-run-electron'
+      })
       console.log = redirect
       process.browser = true
       global.module.paths.push('${process.cwd()}/node_modules')
