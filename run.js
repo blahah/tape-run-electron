@@ -3,7 +3,6 @@ var path = require('path')
 var concat = require('concat-stream')
 
 crashReporter.start()
-var main = null
 
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({show: false})
@@ -22,7 +21,7 @@ app.on('ready', function () {
 
   function runTests (js) {
     mainWindow.webContents.executeJavaScript(
-      "window.onerror = function(err) { console.log('Bail out! ' + err) };" +
+      "window.onerror = function(err) { console.log('Bail out! ' + err) }" +
       js.toString()
     )
   }
@@ -42,14 +41,16 @@ app.on('ready', function () {
   })
 
   function bootstrap () {
-    return '' +
-    "const {ipcRenderer} = require('electron')\n" +
-    'console.log = redirect\n' +
-    'process.browser = true\n' +
-    "global.module.paths.push('" + process.cwd() + "/node_modules'" + ')\n' +
-    "ipcRenderer.send('started')\n" +
-    'function redirect(text) {\n' +
-    "ipcRenderer.send('log', text)\n" +
-    '}'
+    return `
+      const {ipcRenderer, crashReporter} = require('electron')
+      crashReporter.start()
+      console.log = redirect
+      process.browser = true
+      global.module.paths.push('${process.cwd()}/node_modules')
+      ipcRenderer.send('started')
+      function redirect(text) {
+        ipcRenderer.send('log', text)
+      }
+    `
   }
 })
