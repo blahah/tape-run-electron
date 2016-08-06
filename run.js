@@ -1,10 +1,10 @@
-var app = require('app')
+const {app, BrowserWindow} = require('electron')
 var path = require('path')
 var ipc = require('ipc')
-var BrowserWindow = require('browser-window')
 var concat = require('concat-stream')
 
 require('crash-reporter').start()
+var main = null
 
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({show: false})
