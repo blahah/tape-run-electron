@@ -1,8 +1,8 @@
-const {ipcMain, app, BrowserWindow} = require('electron')
+const {crashReporter, ipcMain, app, BrowserWindow} = require('electron')
 var path = require('path')
 var concat = require('concat-stream')
 
-require('crash-reporter').start()
+crashReporter.start()
 var main = null
 
 app.on('ready', function () {
